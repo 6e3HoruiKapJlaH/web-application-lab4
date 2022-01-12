@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="css/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вариант 6</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://npmcdn.com/masonry-layout@4.0/dist/masonry.pkgd.min.js"></script>
+    <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.js"></script>
+    
+    <style>
+      .grid-item{
+        margin-bottom: 15px;
+        background: burlywood;
+        padding:30px;
+        border-radius: 10px;
+        min-height:100px;
+        max-width:400px;
+      }
+      .grid{
+        margin: 0 auto;
+      }
+    </style>
+</head>
+<body>
+  <header class="pageHeader">
+    Header
+    <div class="header__text">
+      
+      This site is working and i have no idea why
+    
+  </div>
+  </header>
+
+  <article class="Article" id="Article">
+    <h3>Наповнення контентом</h3>
+
+  </article>
+
+  <nav class="menu">
+    <ul class ="menu__list">
+      <li><a href="index_home.html" class="menu__item menu__item_active">HOME</a></li>
+      <li><a href="./pages/index_about.html" class="menu__item">ABOUT US</a></li>
+      <li><a href="./pages/index_portfolio.html" class="menu__item">PORTFOLIO</a></li>
+      <li><a href="./pages/index_contact.html" class="menu__item">CONTACT</a></li>
+      <li><a href="./pages/index_location.html" class="menu__item">OUR LOCATION</a></li>
+    </ul>
+  </nav>
+
+  <div class="logo">
+    <img src="img/Home.png" alt="Home">
+
+  </div>
+
+  <div class="Subarticle">
+    <p>
+      IP = 
+      {{ip}}
+    </p>
+    <form action="./set_content" method="POST" id="form">
+      <input type="number" name="count" placeholder="Введіть кількість елементів" id="count">
+    </form>
+    <div class="grid">
+      <div class="gutter-width" id="gutter"></div>
+      <!--<div class="grid-item grid-size"><img src="img/3.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/4.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/5.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/6.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/7.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/8.jpg" alt="alt"></div>
+      <div class="grid-item grid-size"><img src="img/9.jpg" alt="alt"></div>-->
+    </div>
+  </div>
+  
+  <div class="date" id="date">
+    
+
+  </div>
+
+  <footer class="pageFooter">
+    Footer
+    <div class="footer__text">
+      Our site has an unique design
+    </div>
+  </footer>
+  <script>   
+  {%if not ip %}
+  window.onload = function() {
+    x = confirm("Do you want to save data?");
+if(x ==true)
+{
+  
+}
+else
+{
+
+  }
+}
+
+};
+{% endif %}
+    $("#count").change(function(){
+        let count =$("#count").val();
+        if(count>0){
+          $("#count").after('<p><input type="button" id="add" value="Додати"></p>'); 
+          for(let i=0;i<count;i++){
+            $("#count").after('<p><input type="text" name="text[]" placeholder="Введіть текст"></p>');
+          }
+          $("#add").click(function(){
+            let dataArray = $('form').serializeArray();
+
+            $(dataArray).each(function(i, field){
+              if(field.name!="count"){
+                $("#gutter").after(`<div class="grid-item">${field.value}</div>`);
+              }
+              activate();
+              $("form").hide();
+            });
+          });
+        }
+        else{
+          alert("Введіть коректне число")
+        } 
+    });
+    function activate(){
+    var $grid = $('.grid').imagesLoaded(function() {
+    // init Masonry after all images have loaded
+    $grid.masonry({
+        // options
+        itemSelector: '.grid-item',
+        columnWidth: 50,
+        //isFitWidth: true,
+    });
+    });
+    
+};
+
+  </script>
+</body>
+  
+</html>
