@@ -1,0 +1,264 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="{% static  '/css/style.css' %}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вариант 6</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://npmcdn.com/masonry-layout@4.0/dist/masonry.pkgd.min.js"></script>
+  <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.js"></script>
+
+
+</head>
+
+<body>
+  <header class="pageHeader">
+    Header
+    <div class="header__text">
+
+      This site is working and i have no idea why
+
+    </div>
+  </header>
+
+  <article class="Article">Home</article>
+
+  <nav class="menu">
+    <ul class="menu__list">
+      <li><a href="/" class="menu__item menu__item_active">HOME</a></li>
+      <li><a href="./pages/index_about.html" class="menu__item">ABOUT US</a></li>
+      <li><a href="./pages/index_portfolio.html" class="menu__item">PORTFOLIO</a></li>
+      <li><a href="/contacts.html" class="menu__item">CONTACTS</a></li>
+      <li><a href="./pages/index_location.html" class="menu__item">OUR LOCATION</a></li>
+    </ul>
+  </nav>
+
+  <div class="logo">
+    <img src="img/Home.png" alt="Home">
+
+  </div>
+
+  <div class="Subarticle">
+    <button class="play">Play</button>
+    <div class="log">
+
+    </div>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti officiis saepe omnis delectus ad neque fugit
+      excepturi quibusdam ullam minus alias corporis, dolor consequuntur minima id odio consequatur recusandae rerum!
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti officiis saepe omnis delectus ad neque fugit
+      excepturi quibusdam ullam minus alias corporis, dolor consequuntur minima id odio consequatur recusandae rerum!
+    </p>
+  </div>
+
+  <div class="date" id="date">
+
+    This site was published 04.09.2021
+
+  </div>
+
+  <footer class="pageFooter">
+    Footer
+    <div class="footer__text">
+      Our site has an unique design
+    </div>
+  </footer>
+  <script>
+
+
+    localStorage.setItem("log", JSON.stringify([]));
+    let positions = [];
+    let index = 0;
+    let count;
+    let step = 1;
+    let isClicked = false;
+
+    function draw() {
+      let square = $('.square');
+      square.css({
+        left: positions[index] + 'px',
+        top: index + 'px'
+      });
+      if (positions[index] == 0 || positions[index] == Math.round($('.anim').width())) {
+        var logs = JSON.parse(localStorage.getItem("log"));
+        date = new Date()
+        logs[logs.length] = date.toString() + positions[index].toString();
+        localStorage.setItem("log", JSON.stringify(logs));
+        $('.logs').text(logs)
+
+      }
+      index += step;
+      if (index < count) {
+        setTimeout(draw, 50);
+      }
+      else {
+        isClicked = false;
+        $('.stop').remove();
+        $(".close").after('<button class="reload" onclick="reload()">Reload</button>');
+        $('.logs').text(logs)
+
+      }
+    };
+
+    function start() {
+      var logs = JSON.parse(localStorage.getItem("log"));
+      date = new Date()
+      logs[logs.length] = date.toString() + "Start";
+      localStorage.setItem("log", JSON.stringify(logs));
+      $('.logs').text(logs)
+
+
+      $(".close").after('<button class="stop" onclick="stop()">Stop</button>')
+      $('.start').remove();
+      step = 1;
+      if (!isClicked) {
+        isClicked = true;
+        draw();
+      }
+    };
+
+    function stop() {
+      var logs = JSON.parse(localStorage.getItem("log"));
+      date = new Date()
+      logs[logs.length] = date.toString() + "Stop";
+      localStorage.setItem("log", JSON.stringify(logs));
+      $('.logs').text(logs)
+
+
+      $('.stop').remove();
+      $(".close").after('<button class="start" onclick="start()">Start</button>');
+      step = 0;
+      if (!isClicked) {
+        draw();
+        isClicked = true;
+      }
+    };
+
+    function reload() {
+      var logs = JSON.parse(localStorage.getItem("log"));
+      date = new Date()
+      logs[logs.length] = date.toString() + "Reload";
+      localStorage.setItem("log", JSON.stringify(logs));
+      $('.logs').text(logs)
+
+      index = 0;
+      $('.reload').remove();
+      $(".close").after('<button class="start" onclick="start()">Start</button>');
+      $.ajax({
+        url: "set_content",
+        method: "post",
+        dataType: "json",
+        data: {
+          width: Math.round($('.anim').width() - 10),
+          height: Math.round($('.anim').height())
+        },
+        timeout: 1000,
+        success: function (response) {
+          if (response.operation_status == 'ok') {
+            positions = response.list; // массив координат
+            console.log(positions);
+            //positions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+            count = positions.length;
+            let square = $('.square');
+            square.css({
+              left: positions[0] + 'px',
+              top: 0 + 'px'
+            });
+          } else {
+            alert('Ups. Found some error!')
+          }
+        },
+        error: function (response) {
+
+          // Request error. Display right error message
+        }
+      })
+    };
+
+    $('.play').click(function () {
+      var logs = JSON.parse(localStorage.getItem("log"));
+      date = new Date()
+      logs[logs.length] = date.toString() + "Play";
+      localStorage.setItem("log", JSON.stringify(logs));
+      $('.logs').text(logs)
+
+
+      $(".pageHeader").before('<div class="work"><div class="anim"><div class="square"></div></div><div class="controls"><button class="close">Close</button><button class="start" onclick="start()">Start</button><div class="logs"></div></div></div>');
+      $('.work').css({
+        width: $('body').width() / 2 + 10 +'px',
+        height: $('body').height() * 7 / 10+50 +'px'
+      });
+      $('.anim').css({
+        width: $('.work').width() / 2 + 'px',
+        height: $('.work').height() * 7 / 10+ 'px'
+      });
+
+
+      $('.anim').css("background-image", "url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fvipkeramika.com%2F_sh%2F107%2F10701.jpg&f=1&nofb=1'");
+
+      $.ajax({
+        url: "set_content",
+        method: "post",
+        dataType: "json",
+        data: {
+          width: Math.round($('.anim').width() ),
+          height: Math.round($('.anim').height())
+        },
+        timeout: 1000,
+        success: function (response) {
+          if (response.operation_status == 'ok') {
+            positions = response.list; // массив координат
+            console.log(positions);
+            //positions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+            count = positions.length;
+            let square = $('.square');
+            
+            square.css({
+
+              left: positions[0] + 'px',
+              top: 0 + 'px'
+            });
+          } else {
+            alert('Ups. Found some error!')
+          }
+        },
+        error: function (response) {
+
+          // Request error. Display right error message
+        }
+      })
+        ;
+
+      //drawSquare(Math.floor(Math.random() * ($('.anim').width() - 10)), 0)
+
+      $('.close').click(function () {
+
+
+        var logs = JSON.parse(localStorage.getItem("log"));
+        date = new Date()
+        logs[logs.length] = date.toString() + "Close";
+        localStorage.setItem("log", JSON.stringify(logs));
+
+        $('.work').remove();
+
+        $('.log').text(logs)
+
+        let positions = [];
+        let index = 0;
+        let count;
+        let step = 1;
+        let isClicked = false;
+      });
+
+    });
+  </script>
+</body>
+
+</html>
